@@ -9,3 +9,20 @@ enum class NodeType {
     FOLDER,
     FILE
 };
+ class Node {
+    int id;
+    std::string name;
+    NodeType type;
+    std::string content;
+    std::vector<Node*> children;
+    Node* parent;
+};
+ class Tree {
+    Node* root;
+    int nextId;
+    std::unordered_map<int, Node*> nodesMap;
+};
+ class FileSystem {
+    Tree fileTree;
+    Node* currentDirectory;
+};
