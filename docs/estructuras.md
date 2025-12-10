@@ -1,28 +1,32 @@
-# Diseño de Estructuras
+# Estructura del Proyecto - Día 1
 
-**Fecha:** 9 de diciembre del 2025
-**Autor:** Luque Orozco Alan Giovanny
+## Estructura de Archivos
 
-## 1. Enumeración NodeType
-```cpp
-enum class NodeType {
-    FOLDER,
-    FILE
-};
- class Node {
-    int id;
-    std::string name;
-    NodeType type;
-    std::string content;
-    std::vector<Node*> children;
-    Node* parent;
-};
- class Tree {
-    Node* root;
-    int nextId;
-    std::unordered_map<int, Node*> nodesMap;
-};
- class FileSystem {
-    Tree fileTree;
-    Node* currentDirectory;
-};
+proyecto-arboles/
+├── src/
+│ ├── main.cpp # Punto de entrada principal
+│ ├── TreeNode.h # Definición del nodo
+│ ├── FileSystemTree.h # Clase del árbol
+│ ├── Trie.h # Estructura para autocompletado
+│ └── ConsoleInterface.h # Interfaz de consola
+├── data/
+│ └── filesystem.json # Archivo de persistencia
+├── tests/ # Pruebas unitarias
+└── README.md # Documentación
+
+
+## Dependencias
+- C++17 o superior
+- Biblioteca JSON: nlohmann/json (a incluir)
+
+## MVP Definido
+1. **Operaciones CRUD básicas** en árbol jerárquico
+2. **Persistencia** en formato JSON
+3. **Búsqueda con autocompletado** usando Trie
+4. **Exportación** de recorridos preorden
+5. **Interfaz de consola** interactiva
+
+## Próximos pasos (Día 2-3)
+- Implementar operaciones básicas del árbol
+- Crear pruebas unitarias iniciales
+- Establecer sistema de IDs único

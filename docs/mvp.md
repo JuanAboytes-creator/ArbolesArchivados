@@ -12,8 +12,8 @@ Autores: Aboytes Mena Juan Jaime -- Luque Orozco Alan Giovanny
 ### 2. Operaciones básicas:
 - Crear carpeta/archivo
 - Eliminar (a papelera temporal)
-- Mover entre carpetas
-- Renombrar
+- Mostrar ruta completa
+- listar hijos
 - Listar contenido
 
 ### 3. Persistencia en JSON
@@ -23,3 +23,29 @@ Autores: Aboytes Mena Juan Jaime -- Luque Orozco Alan Giovanny
 ### 4. Interfaz de consola
 - Menú interactivo
 - Comandos simples tipo Linux
+
+Funcionalidades mínimas para el MVP:
+
+1. CREACIÓN:
+   - mkdir <ruta>: Crear carpeta
+   - touch <ruta>: Crear archivo
+
+2. NAVEGACIÓN Y CONSULTA:
+   - ls <ruta>: Listar contenido
+   - pwd: Mostrar ruta actual
+
+3. MANIPULACIÓN:
+   - mv <origen> <destino>: Mover nodo
+   - rename <ruta> <nuevo_nombre>: Renombrar
+   - rm <ruta>: Eliminar a papelera
+
+4. BÚSQUEDA:
+   - search <prefijo>: Buscar por prefijo
+   - autocomplete <prefijo>: Sugerencias
+
+5. EXPORTACIÓN:
+   - export_preorder <archivo>: Exportar recorrido
+
+6. PERSISTENCIA:
+   - save: Guardar estado
+   - load: Cargar estado
