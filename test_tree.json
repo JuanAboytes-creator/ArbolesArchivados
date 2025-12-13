@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "height": 3,
+    "nextId": 7,
+    "nodes": 7,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "content": "#include <iostream>",
+                "id": 4,
+                "name": "main.cpp",
+                "type": "FILE"
+              },
+              {
+                "children": [],
+                "content": "#pragma once",
+                "id": 5,
+                "name": "utils.hpp",
+                "type": "FILE"
+              }
+            ],
+            "id": 2,
+            "name": "src",
+            "type": "FOLDER"
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "content": "# Proyecto",
+                "id": 6,
+                "name": "README.md",
+                "type": "FILE"
+              }
+            ],
+            "id": 3,
+            "name": "docs",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 1,
+        "name": "proyecto",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

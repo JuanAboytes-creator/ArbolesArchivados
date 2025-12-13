@@ -1,3 +1,4 @@
+// prueba_dia4.cpp
 #include <iostream>
 #include <memory>
 #include "FileSystemTree.hpp"
@@ -6,44 +7,37 @@
 using namespace std;
 
 int main() {
-    cout << "=== DIA 4: PRUEBA DE PERSISTENCIA JSON ===" << endl;
+    cout << "=== PRUEBA DIA 4: PERSISTENCIA JSON ===" << endl;
     
-    // Crear arbol de prueba
+    // Crear un árbol simple
     auto tree = make_shared<FileSystemTree>();
     
     try {
-        // Crear estructura basica
-        tree->createNode("/root", "Documentos", NodeType::FOLDER);
-        tree->createNode("/root", "Imagenes", NodeType::FOLDER);
-        tree->createNode("/root/Documentos", "notas.txt", NodeType::FILE, "Contenido de prueba");
+        tree->createNode("/root", "carpeta1", NodeType::FOLDER);
+        tree->createNode("/root", "carpeta2", NodeType::FOLDER);
+        tree->createNode("/root/carpeta1", "archivo1.txt", NodeType::FILE, "Contenido 1");
+        tree->createNode("/root/carpeta2", "archivo2.txt", NodeType::FILE, "Contenido 2");
         
-        cout << "\nArbol creado exitosamente" << endl;
-        cout << "Total nodos: " << tree->calculateSize() << endl;
+        cout << "Árbol creado. Número de nodos: " << tree->calculateSize() << endl;
+        
+        // Guardar
+        if (JsonHandler::saveTree(tree, "test_dia4.json")) {
+            cout << "Guardado exitoso." << endl;
+        } else {
+            cout << "Error al guardar." << endl;
+        }
+        
+        // Cargar en un nuevo árbol
+        auto tree2 = make_shared<FileSystemTree>();
+        if (JsonHandler::loadTree(tree2, "test_dia4.json")) {
+            cout << "Carga exitosa. Número de nodos: " << tree2->calculateSize() << endl;
+        } else {
+            cout << "Error al cargar." << endl;
+        }
         
     } catch (const exception& e) {
         cout << "Error: " << e.what() << endl;
-        return 1;
     }
-    
-    // Probar guardado
-    cout << "\n--- Probando guardado ---" << endl;
-    if (JsonHandler::saveTree(tree, "test_dia4.json")) {
-        cout << "Guardado exitoso en test_dia4.json" << endl;
-    } else {
-        cout << "Error en guardado" << endl;
-    }
-    
-    // Probar carga
-    cout << "\n--- Probando carga ---" << endl;
-    auto tree2 = make_shared<FileSystemTree>();
-    if (JsonHandler::loadTree(tree2, "test_dia4.json")) {
-        cout << "Carga exitosa desde test_dia4.json" << endl;
-    } else {
-        cout << "Error en carga" << endl;
-    }
-    
-    cout << "\n=== DIA 4 COMPLETADO ===" << endl;
-    cout << "Nota: JSON completo con nlohmann/json en Dia 5" << endl;
     
     return 0;
 }
