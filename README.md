@@ -8,6 +8,7 @@ Implementación en C++ de un sistema de archivos jerárquico que incluye:
 - Interfaz de consola interactiva
 
 ## Estructura del Proyecto
+```bash
 ArbolesArchivados/
 ├── src/
 │ ├── main.cpp # Punto de entrada principal
@@ -26,7 +27,7 @@ ArbolesArchivados/
 ├── compile.sh # Script de compilación
 └── README.md # Este archivo
 
-
+```
 ## Requisitos
 - C++17 o superior
 - CMake 3.10+ (recomendado) o g++ 7+
@@ -35,33 +36,42 @@ ArbolesArchivados/
 ## Compilación
 
 ### Método 1: Usando CMake (recomendado)
-```bash
+
 # Ejecutar script de compilación
+```bash
 chmod +x compile.sh
 ./compile.sh
-
+```
 ### Metodo 2: Manual con Cmake 
+```bash
 mkdir build
 cd build
 cmake ..
 make
-
+```
 ### Metodo 3: usando Makefile
 # Descarga automática de dependencias y compilación
+```bash
 make
-
+```
 ## Ejecucion
-###Apliciacion principal
+# Apliciacion principal
+```bash
 ./build/arboles_archivados
+```
 
-###Pruebas especificas
+### Pruebas especificas
 # Pruebas días 5-6 (Trie y búsqueda)
+```bash
 ./build/prueba_dia5_6
-
+```
 # Prueba día 4 (JSON)
+```bash
 ./build/prueba_dia4
+```
 
 ### Comandos Disponibles
+```bash
 
 cd <ruta>            - Cambiar directorio actual
 ls [ruta]            - Listar contenido
@@ -79,33 +89,39 @@ tree                 - Mostrar estructura completa
 pwd                  - Mostrar ruta actual
 help                 - Mostrar ayuda
 exit                 - Salir
-
+```
 ## Ejemplos de uso
 
 ### Crear estructura de archivos
+```bash
 mkdir Documentos
 cd Documentos
 touch notas.txt "Estas son mis notas"
 mkdir Proyectos
 cd Proyectos
 touch main.cpp "#include <iostream>"
-
+```
 ### Busqueda y autocompletado
 # Buscar archivos que empiezan con "not"
+```bash
 search not
-
+```
 # Obtener sugerencias para "pro"
+```bash
 autocomplete pro
-
+```
 ### Persistencia
 
 # Guardar estado actual
+```bash
 save sistema.json
-
+```
 # Cargar estado posteriormente
+```bash
 load sistema.json
-
+```
 ### Exportar recorrido
 
 # Exportar recorrido preorden a archivo
+```bash
 export recorrido.txt
