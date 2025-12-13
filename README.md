@@ -37,7 +37,7 @@ ArbolesArchivados/
 
 ### Método 1: Usando CMake (recomendado)
 
-# Ejecutar script de compilación
+#### Ejecutar script de compilación
 ```bash
 chmod +x compile.sh
 ./compile.sh
@@ -50,22 +50,22 @@ cmake ..
 make
 ```
 ### Metodo 3: usando Makefile
-# Descarga automática de dependencias y compilación
+#### Descarga automática de dependencias y compilación
 ```bash
 make
 ```
 ## Ejecucion
-# Apliciacion principal
+#### Apliciacion principal
 ```bash
 ./build/arboles_archivados
 ```
 
 ### Pruebas especificas
-# Pruebas días 5-6 (Trie y búsqueda)
+#### Pruebas días 5-6 (Trie y búsqueda)
 ```bash
 ./build/prueba_dia5_6
 ```
-# Prueba día 4 (JSON)
+#### Prueba día 4 (JSON)
 ```bash
 ./build/prueba_dia4
 ```
@@ -102,26 +102,26 @@ cd Proyectos
 touch main.cpp "#include <iostream>"
 ```
 ### Busqueda y autocompletado
-# Buscar archivos que empiezan con "not"
+#### Buscar archivos que empiezan con "not"
 ```bash
 search not
 ```
-# Obtener sugerencias para "pro"
+#### Obtener sugerencias para "pro"
 ```bash
 autocomplete pro
 ```
 ### Persistencia
 
-# Guardar estado actual
+#### Guardar estado actual
 ```bash
 save sistema.json
 ```
-# Cargar estado posteriormente
+#### Cargar estado posteriormente
 ```bash
 load sistema.json
 ```
 ### Exportar recorrido
 
-# Exportar recorrido preorden a archivo
+#### Exportar recorrido preorden a archivo
 ```bash
 export recorrido.txt
