@@ -6,7 +6,7 @@
 #include "JsonHandler.hpp"
 #include <memory>
 #include <string>
-
+#include <vector>
 using namespace std;
 
 class ConsoleInterface {
@@ -14,6 +14,7 @@ private:
     shared_ptr<FileSystemTree> fileSystem;
     shared_ptr<SearchEngine> searchEngine;
     string currentPath;
+    vector<shared_ptr<TreeNode>> trashBin;
     
     // Comandos internos
     void processCommand(const string& command);
@@ -32,6 +33,10 @@ private:
     void loadState(const string& filename);
     void showTree();
     void showPath();
+
+    void listTrash();                      
+    void restoreFromTrash(const string& name);
+    void emptyTrash();
     
     // Helpers
     vector<string> parseArguments(const string& input);
