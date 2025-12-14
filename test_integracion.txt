@@ -1,0 +1,11 @@
+=== RECORRIDO PREORDEN DEL ÁRBOL ===
+Fecha: Dec 14 2025 14:14:53
+Total nodos: 5
+Altura: 2
+=====================================
+
+ID: 0, Nombre: root, Tipo: CARPETA
+ID: 1, Nombre: test1.txt, Tipo: ARCHIVO
+ID: 2, Nombre: carpeta_renombrada, Tipo: CARPETA
+ID: 3, Nombre: archivo1.txt, Tipo: ARCHIVO
+ID: 4, Nombre: subcarpeta, Tipo: CARPETA

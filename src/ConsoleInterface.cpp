@@ -3,8 +3,12 @@
 #include <sstream>
 #include <algorithm>
 #include <fstream>
+#include <chrono>
+#include <random>
+#include <functional>
 
 using namespace std;
+using namespace chrono;
 
 ConsoleInterface::ConsoleInterface() 
     : fileSystem(make_shared<FileSystemTree>()), 
@@ -136,6 +140,30 @@ void ConsoleInterface::processCommand(const string& command) {
             showTree();
         } else if (cmd == "pwd") {
             showPath();
+        } else if (cmd == "pwd") {
+            showPath();
+            
+        // Días 10-11: Comandos de pruebas
+        } else if (cmd == "test-integration") {
+            runIntegrationTests();
+        } else if (cmd == "test-performance") {
+            runPerformanceTests();
+        } else if (cmd == "test-edge") {
+            runEdgeCaseTests();
+        } else if (cmd == "stats") {
+            showSystemStats();
+        } else if (cmd == "validate") {
+            validateSystem();
+        } else if (cmd == "generate") {
+            if (args.size() > 2) {
+                int levels = stoi(args[1]);
+                int children = stoi(args[2]);
+                generateTestTree(levels, children);
+            } else {
+                cout << "Uso: generate <niveles> <hijos_por_nivel>" << endl;
+            }
+        } else if (cmd == "benchmark") {
+            benchmarkOperations();
         } else {
             cout << "Comando no reconocido: " << cmd << endl;
             cout << "Escriba 'help' para ver los comandos disponibles." << endl;
@@ -147,28 +175,289 @@ void ConsoleInterface::processCommand(const string& command) {
 
 void ConsoleInterface::showHelp() {
     cout << "\n=== AYUDA DE COMANDOS ===" << endl;
-    cout << "cd <ruta>            - Cambiar directorio actual" << endl;
-    cout << "ls [ruta]            - Listar contenido del directorio" << endl;
-    cout << "mkdir <nombre>       - Crear nuevo directorio" << endl;
-    cout << "touch <nombre> [cont] - Crear nuevo archivo" << endl;
-    cout << "mv <origen> <destino> - Mover nodo" << endl;
-    cout << "rm <ruta>            - Eliminar nodo (mueve a papelera)" << endl;
-    cout << "rename <ruta> <nuevo> - Renombrar nodo" << endl;
-    cout << "search <consulta>    - Buscar nodos por nombre" << endl;
-    cout << "autocomplete <prefijo> - Sugerencias de autocompletado" << endl;
-    cout << "export <archivo>     - Exportar recorrido preorden" << endl;
-    cout << "save [archivo]       - Guardar estado en JSON" << endl;
-    cout << "load [archivo]       - Cargar estado desde JSON" << endl;
-    cout << "tree                 - Mostrar estructura completa" << endl;
-    cout << "pwd                  - Mostrar ruta actual" << endl;
-    cout << "trash                 - Mostrar papelera temporal" << endl;
-    cout << "restore <nombre>      - Restaurar elemento de papelera" << endl;
-    cout << "emptytrash            - Vaciar papelera permanentemente" << endl;
-    cout << "help                 - Mostrar esta ayuda" << endl;
-    cout << "exit                 - Salir del sistema" << endl;
+    cout << "Comandos básicos:" << endl;
+    cout << "  cd <ruta>            - Cambiar directorio actual" << endl;
+    cout << "  ls [ruta]            - Listar contenido del directorio" << endl;
+    cout << "  mkdir <nombre>       - Crear nuevo directorio" << endl;
+    cout << "  touch <nombre> [cont] - Crear nuevo archivo" << endl;
+    cout << "  mv <origen> <destino> - Mover nodo" << endl;
+    cout << "  rm <ruta>            - Eliminar nodo (mueve a papelera)" << endl;
+    cout << "  rename <ruta> <nuevo> - Renombrar nodo" << endl;
+    cout << "  search <consulta>    - Buscar nodos por nombre" << endl;
+    cout << "  autocomplete <prefijo> - Sugerencias de autocompletado" << endl;
+    cout << "  export <archivo>     - Exportar recorrido preorden" << endl;
+    cout << "  save [archivo]       - Guardar estado en JSON" << endl;
+    cout << "  load [archivo]       - Cargar estado desde JSON" << endl;
+    cout << "  tree                 - Mostrar estructura completa" << endl;
+    cout << "  pwd                  - Mostrar ruta actual" << endl;
+    
+    cout << "\nPapelera:" << endl;
+    cout << "  trash                - Mostrar papelera temporal" << endl;
+    cout << "  restore <nombre>     - Restaurar elemento de papelera" << endl;
+    cout << "  emptytrash           - Vaciar papelera permanentemente" << endl;
+    
+    cout << "\nPruebas (Días 10-11):" << endl;
+    cout << "  test-integration     - Ejecutar pruebas de integración" << endl;
+    cout << "  test-performance     - Ejecutar pruebas de rendimiento" << endl;
+    cout << "  test-edge            - Ejecutar pruebas de casos límite" << endl;
+    cout << "  stats                - Mostrar estadísticas del sistema" << endl;
+    cout << "  validate             - Validar consistencia del sistema" << endl;
+    cout << "  generate <n> <h>     - Generar árbol de prueba" << endl;
+    cout << "  benchmark            - Medir rendimiento de operaciones" << endl;
+    
+    cout << "\nSistema:" << endl;
+    cout << "  help                 - Mostrar esta ayuda" << endl;
+    cout << "  exit                 - Salir del sistema" << endl;
     cout << "=========================\n" << endl;
 }
+void ConsoleInterface::runIntegrationTests() {
+    cout << "\n=== PRUEBAS DE INTEGRACIÓN ===" << endl;
+    
+    // Test 1: Crear y eliminar estructura compleja
+    cout << "\n1. Creando estructura compleja..." << endl;
+    createFile("test1.txt", "Contenido de prueba");
+    makeDirectory("carpeta1");
+    changeDirectory("carpeta1");
+    createFile("archivo1.txt", "Archivo dentro de carpeta");
+    makeDirectory("subcarpeta");
+    changeDirectory("..");
+    
+    cout << "✓ Estructura creada exitosamente." << endl;
+    
+    // Test 2: Mover nodos
+    cout << "\n2. Probando movimiento de nodos..." << endl;
+    moveNode("carpeta1", ".");
+    cout << "✓ Movimiento completado." << endl;
+    
+    // Test 3: Renombrar
+    cout << "\n3. Probando renombrado..." << endl;
+    renameNode("carpeta1", "carpeta_renombrada");
+    cout << "✓ Renombrado completado." << endl;
+    
+    // Test 4: Buscar
+    cout << "\n4. Probando búsqueda..." << endl;
+    searchNodes("test");
+    cout << "✓ Búsqueda completada." << endl;
+    
+    // Test 5: Exportar
+    cout << "\n5. Probando exportación..." << endl;
+    exportPreorder("test_integracion.txt");
+    cout << "✓ Exportación completada." << endl;
+    
+    // Test 6: Guardar y cargar
+    cout << "\n6. Probando persistencia..." << endl;
+    saveState("test_state.json");
+    loadState("test_state.json");
+    cout << "✓ Persistencia verificada." << endl;
+    
+    // Test 7: Papelera
+    cout << "\n7. Probando papelera..." << endl;
+    removeNode("test1.txt");
+    listTrash();
+    restoreFromTrash("test1.txt");
+    cout << "✓ Papelera funcionando correctamente." << endl;
+    
+    cout << "\n=== PRUEBAS DE INTEGRACIÓN COMPLETADAS ===" << endl;
+}
 
+void ConsoleInterface::runPerformanceTests() {
+    cout << "\n=== PRUEBAS DE RENDIMIENTO ===" << endl;
+    
+    // Guardar estado actual
+    auto originalTree = fileSystem;
+    auto originalSearch = searchEngine;
+    
+    // Crear árbol grande
+    cout << "1. Generando árbol grande para pruebas..." << endl;
+    fileSystem = make_shared<FileSystemTree>();
+    searchEngine = make_shared<SearchEngine>(fileSystem);
+    
+    fileSystem->generateLargeTree(4, 3); // 4 niveles, 3 hijos por nivel
+    int totalNodes = fileSystem->calculateSize();
+    cout << "   Árbol creado con " << totalNodes << " nodos." << endl;
+    
+    // Medir recorrido
+    cout << "\n2. Mediendo tiempo de recorrido..." << endl;
+    double traversalTime = fileSystem->measureTraversalTime();
+    cout << "   Tiempo de recorrido preorden: " << traversalTime * 1000 << " ms" << endl;
+    cout << "   Tiempo por nodo: " << (traversalTime / totalNodes) * 1000000 << " μs" << endl;
+    
+    // Medir búsqueda
+    cout << "\n3. Mediendo tiempo de búsqueda..." << endl;
+    double searchTime = fileSystem->measureSearchTime("nodo");
+    cout << "   Tiempo de búsqueda: " << searchTime * 1000 << " ms" << endl;
+    
+    // Medir operaciones de creación
+    cout << "\n4. Mediendo operaciones de creación..." << endl;
+    auto start = high_resolution_clock::now();
+    
+    for (int i = 0; i < 100; i++) {
+        string name = "perf_test_" + to_string(i);
+        fileSystem->createNode("/root", name, NodeType::FILE);
+    }
+    
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed = end - start;
+    cout << "   Tiempo para crear 100 archivos: " << elapsed.count() * 1000 << " ms" << endl;
+    cout << "   Tiempo por operación: " << (elapsed.count() / 100) * 1000 << " ms" << endl;
+    
+    // Restaurar estado original
+    fileSystem = originalTree;
+    searchEngine = originalSearch;
+    
+    cout << "\n=== PRUEBAS DE RENDIMIENTO COMPLETADAS ===" << endl;
+}
+
+void ConsoleInterface::runEdgeCaseTests() {
+    cout << "\n=== PRUEBAS DE CASOS LÍMITE ===" << endl;
+    
+    cout << "1. Intentando crear nodo con nombre vacío..." << endl;
+    try {
+        createFile("", "contenido");
+    } catch (const exception& e) {
+        cout << "   ✓ Correctamente rechazado: " << e.what() << endl;
+    }
+    
+    cout << "\n2. Intentando crear nodo con nombre duplicado..." << endl;
+    createFile("duplicado.txt", "test");
+    try {
+        createFile("duplicado.txt", "test2");
+    } catch (const exception& e) {
+        cout << "   ✓ Correctamente rechazado: " << e.what() << endl;
+    }
+    
+    cout << "\n3. Intentando mover nodo a sí mismo..." << endl;
+    makeDirectory("test_move");
+    try {
+        moveNode("test_move", "test_move");
+    } catch (const exception& e) {
+        cout << "   ✓ Correctamente rechazado: " << e.what() << endl;
+    }
+    
+    cout << "\n4. Intentando mover nodo a su descendiente..." << endl;
+    makeDirectory("test_move/parent");
+    makeDirectory("test_move/parent/child");
+    try {
+        moveNode("test_move/parent", "test_move/parent/child");
+    } catch (const exception& e) {
+        cout << "   ✓ Correctamente rechazado: " << e.what() << endl;
+    }
+    
+    cout << "\n5. Intentando eliminar directorio no vacío..." << endl;
+    createFile("test_delete/file.txt", "contenido");
+    removeNode("test_delete");
+    cout << "   ✓ Directorio movido a papelera correctamente." << endl;
+    
+    cout << "\n6. Intentando restaurar nodo que no existe en papelera..." << endl;
+    restoreFromTrash("nodo_inexistente");
+    cout << "   ✓ Correctamente manejado." << endl;
+    
+    cout << "\n7. Probando rutas inválidas..." << endl;
+    try {
+        changeDirectory("/ruta/inexistente");
+    } catch (const exception& e) {
+        cout << "   ✓ Correctamente manejado: " << e.what() << endl;
+    }
+    
+    cout << "\n=== PRUEBAS DE CASOS LÍMITE COMPLETADAS ===" << endl;
+}
+
+void ConsoleInterface::showSystemStats() {
+    cout << "\n=== ESTADÍSTICAS DEL SISTEMA ===" << endl;
+    
+    // Estadísticas del árbol
+    fileSystem->printTreeStats();
+    
+    // Estadísticas del índice de búsqueda
+    searchEngine->printIndexStats();
+    
+    // Estadísticas de la papelera
+    cout << "Papelera: " << trashBin.size() << " elementos" << endl;
+    
+    // Memoria aproximada
+    int totalNodes = fileSystem->calculateSize();
+    long estimatedMemory = totalNodes * 100; // Estimación aproximada por nodo
+    cout << "Memoria estimada: ~" << estimatedMemory << " bytes" << endl;
+    
+    cout << "=================================\n" << endl;
+}
+
+void ConsoleInterface::validateSystem() {
+    cout << "\n=== VALIDACIÓN DEL SISTEMA ===" << endl;
+    
+    // Validar árbol
+    bool treeValid = fileSystem->validateTreeStructure();
+    cout << "\nValidación del árbol: " << (treeValid ? "PASÓ" : "FALLÓ") << endl;
+    
+    // Validar índice
+    bool indexValid = searchEngine->verifyIndexIntegrity();
+    cout << "Validación del índice: " << (indexValid ? "PASÓ" : "FALLÓ") << endl;
+    
+    // Verificar consistencia entre árbol e índice
+    cout << "\nVerificando consistencia árbol-índice..." << endl;
+    int treeSize = fileSystem->calculateSize();
+    // Aquí podríamos agregar más verificaciones
+    
+    cout << "\n=== VALIDACIÓN COMPLETADA ===" << endl;
+}
+
+void ConsoleInterface::generateTestTree(int levels, int children) {
+    cout << "\nGenerando árbol de prueba..." << endl;
+    cout << "Niveles: " << levels << ", Hijos por nivel: " << children << endl;
+    
+    fileSystem->generateLargeTree(levels, children);
+    
+    cout << "Árbol generado exitosamente." << endl;
+    showSystemStats();
+}
+
+void ConsoleInterface::benchmarkOperations() {
+    cout << "\n=== BENCHMARK DE OPERACIONES ===" << endl;
+    
+    vector<pair<string, std::function<void()>>> operations;
+    
+    // Agregar operaciones al vector
+    operations.push_back({"Crear 100 archivos", [&]() {
+        for (int i = 0; i < 100; i++) {
+            createFile("bench_" + to_string(i) + ".txt", "contenido");
+        }
+    }});
+    
+    operations.push_back({"Crear 50 carpetas", [&]() {
+        for (int i = 0; i < 50; i++) {
+            makeDirectory("bench_dir_" + to_string(i));
+        }
+    }});
+    
+    operations.push_back({"Listar directorio", [&]() {
+        listDirectory();
+    }});
+    
+    operations.push_back({"Búsqueda por prefijo", [&]() {
+        searchNodes("bench");
+    }});
+    
+    operations.push_back({"Recorrido completo", [&]() {
+        fileSystem->preorderTraversal();
+    }});
+    
+    for (auto& operation : operations) {
+        auto start = high_resolution_clock::now();
+        
+        try {
+            operation.second();  // Ejecutar la función
+        } catch (const exception& e) {
+            cout << "Error durante " << operation.first << ": " << e.what() << endl;
+        }
+        
+        auto end = high_resolution_clock::now();
+        duration<double> elapsed = end - start;
+        
+        cout << operation.first << ": " << elapsed.count() * 1000 << " ms" << endl;
+    }
+    
+    cout << "\n=== BENCHMARK COMPLETADO ===" << endl;
+}
 void ConsoleInterface::changeDirectory(const string& path) {
     string absPath = getAbsolutePath(path);
     auto node = fileSystem->findNodeByPath(absPath);

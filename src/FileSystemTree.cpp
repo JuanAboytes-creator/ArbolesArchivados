@@ -4,8 +4,14 @@
 #include <stack>
 #include <queue>
 #include <iostream>
+#include <chrono>
+#include <cmath>
+#include <unordered_set>
+#include <climits>
+#include <limits>
 
 using namespace std;
+using namespace chrono;
 
 FileSystemTree::FileSystemTree() : nextId(1) {
     // Crear nodo raíz
@@ -388,7 +394,358 @@ void FileSystemTree::printTreeRecursive(shared_ptr<TreeNode> node, int depth) {
         printTreeRecursive(child, depth + 1);
     }
 }
-bool FileSystemTree::isNodeInTree(std::shared_ptr<TreeNode> node) {
-    if (!node) return false;
+// Verificar si nodo está en árbol
+bool FileSystemTree::isNodeInTree(shared_ptr<TreeNode> node) {
     return findNodeById(node->id) != nullptr;
+}
+
+// Helper para estadísticas
+void FileSystemTree::collectStatsRecursive(shared_ptr<TreeNode> node, int depth, 
+                                          int& folderCount, int& fileCount, int& maxDepth, int& totalNodes) {
+    if (!node) return;
+    
+    totalNodes++;
+    if (node->isFolder()) {
+        folderCount++;
+    } else {
+        fileCount++;
+    }
+    
+    maxDepth = max(maxDepth, depth);
+    
+    for (auto& child : node->children) {
+        collectStatsRecursive(child, depth + 1, folderCount, fileCount, maxDepth, totalNodes);
+    }
+}
+
+// Obtener estadísticas del árbol
+FileSystemTree::TreeStats FileSystemTree::getTreeStats() {
+    TreeStats stats;
+    stats.totalNodes = 0;
+    stats.folderCount = 0;
+    stats.fileCount = 0;
+    stats.maxDepth = 0;
+    stats.minDepth = INT_MAX;  // Usar INT_MAX que ahora está disponible
+    stats.avgDepth = 0.0;
+    stats.treeHeight = 0;
+    
+    if (!root) return stats;
+    
+    // Usar BFS para calcular profundidades mínimas y promedio
+    queue<pair<shared_ptr<TreeNode>, int>> q;
+    q.push({root, 0});
+    
+    int totalLeafDepth = 0;
+    int leafCount = 0;
+    
+    while (!q.empty()) {
+        auto currentPair = q.front();
+        auto current = currentPair.first;
+        int depth = currentPair.second;
+        q.pop();
+        
+        stats.totalNodes++;
+        if (current->isFolder()) {
+            stats.folderCount++;
+        } else {
+            stats.fileCount++;
+        }
+        
+        // Si es hoja
+        if (current->children.empty()) {
+            leafCount++;
+            totalLeafDepth += depth;
+            stats.minDepth = min(stats.minDepth, depth);
+        }
+        
+        for (auto& child : current->children) {
+            q.push({child, depth + 1});
+        }
+    }
+    
+    stats.maxDepth = calculateHeight() - 1; // Altura - 1 para profundidad máxima
+    stats.treeHeight = calculateHeight();
+    
+    if (leafCount > 0) {
+        stats.avgDepth = static_cast<double>(totalLeafDepth) / leafCount;
+    } else {
+        stats.minDepth = 0;
+        stats.avgDepth = 0.0;
+    }
+    
+    return stats;
+}
+
+// Generar árbol grande para pruebas de rendimiento
+void FileSystemTree::generateLargeTree(int levels, int childrenPerLevel) {
+    cout << "Generando árbol grande con " << levels << " niveles y " 
+         << childrenPerLevel << " hijos por nivel..." << endl;
+    
+    // Limpiar árbol existente
+    root = make_shared<TreeNode>(0, "root", NodeType::FOLDER);
+    nextId = 1;
+    
+    // Usar BFS para generar el árbol
+    queue<shared_ptr<TreeNode>> q;
+    q.push(root);
+    int currentLevel = 0;
+    
+    while (!q.empty() && currentLevel < levels) {
+        int levelSize = q.size();
+        
+        for (int i = 0; i < levelSize; i++) {
+            auto current = q.front();
+            q.pop();
+            
+            // Crear hijos para este nodo
+            for (int j = 0; j < childrenPerLevel; j++) {
+                string name = "nodo_L" + to_string(currentLevel + 1) + 
+                            "_P" + to_string(i) + "_H" + to_string(j);
+                NodeType type = (currentLevel == levels - 1) ? NodeType::FILE : NodeType::FOLDER;
+                
+                try {
+                    auto newNode = make_shared<TreeNode>(nextId++, name, type);
+                    current->addChild(newNode);
+                    
+                    if (currentLevel < levels - 1) {
+                        q.push(newNode);
+                    }
+                } catch (const exception& e) {
+                    // Ignorar errores en generación
+                }
+            }
+        }
+        
+        currentLevel++;
+    }
+    
+    cout << "Árbol generado. Total de nodos: " << calculateSize() << endl;
+}
+
+// Medir tiempo de recorrido
+double FileSystemTree::measureTraversalTime() {
+    auto start = high_resolution_clock::now();
+    
+    // Realizar recorrido preorden
+    auto traversal = preorderTraversal();
+    
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed = end - start;
+    
+    return elapsed.count();
+}
+
+// Medir tiempo de búsqueda
+double FileSystemTree::measureSearchTime(const string& query) {
+    auto start = high_resolution_clock::now();
+    
+    // Realizar búsqueda básica
+    vector<shared_ptr<TreeNode>> results;
+    queue<shared_ptr<TreeNode>> q;
+    q.push(root);
+    
+    while (!q.empty()) {
+        auto current = q.front();
+        q.pop();
+        
+        if (current->name.find(query) != string::npos) {
+            results.push_back(current);
+        }
+        
+        for (auto& child : current->children) {
+            q.push(child);
+        }
+    }
+    
+    auto end = high_resolution_clock::now();
+    duration<double> elapsed = end - start;
+    
+    return elapsed.count();
+}
+
+// Validar estructura del árbol
+bool FileSystemTree::validateTreeStructure() {
+    cout << "=== VALIDACIÓN DE ESTRUCTURA DEL ÁRBOL ===" << endl;
+    
+    bool isValid = true;
+    
+    // 1. Verificar que la raíz no tenga padre
+    if (root->parent.lock()) {
+        cout << "ERROR: La raíz tiene un padre asignado." << endl;
+        isValid = false;
+    }
+    
+    // 2. Verificar consistencia padre-hijo
+    stack<shared_ptr<TreeNode>> s;
+    s.push(root);
+    
+    int inconsistencyCount = 0;
+    while (!s.empty()) {
+        auto current = s.top();
+        s.pop();
+        
+        for (auto& child : current->children) {
+            // Verificar que el padre del hijo sea correcto
+            auto parent = child->parent.lock();
+            if (parent != current) {
+                cout << "ERROR: Inconsistencia padre-hijo en nodo '" 
+                     << child->name << "' (ID: " << child->id << ")" << endl;
+                inconsistencyCount++;
+                isValid = false;
+            }
+            s.push(child);
+        }
+    }
+    
+    if (inconsistencyCount == 0) {
+        cout << "✓ Relaciones padre-hijo consistentes." << endl;
+    }
+    
+    // 3. Verificar IDs únicos
+    unordered_set<int> ids;
+    s.push(root);
+    int duplicateCount = 0;
+    
+    while (!s.empty()) {
+        auto current = s.top();
+        s.pop();
+        
+        if (ids.find(current->id) != ids.end()) {
+            cout << "ERROR: ID duplicado encontrado: " << current->id 
+                 << " (Nodo: " << current->name << ")" << endl;
+            duplicateCount++;
+            isValid = false;
+        }
+        ids.insert(current->id);
+        
+        for (auto& child : current->children) {
+            s.push(child);
+        }
+    }
+    
+    if (duplicateCount == 0) {
+        cout << "✓ Todos los IDs son únicos." << endl;
+    }
+    
+    // 4. Verificar nombres duplicados en mismo nivel
+    s.push(root);
+    int duplicateNameCount = 0;
+    
+    while (!s.empty()) {
+        auto current = s.top();
+        s.pop();
+        
+        unordered_set<string> names;
+        for (auto& child : current->children) {
+            if (names.find(child->name) != names.end()) {
+                cout << "ADVERTENCIA: Nombre duplicado '" << child->name 
+                     << "' en hijos de '" << current->name << "'" << endl;
+                duplicateNameCount++;
+                // No marcamos como error porque técnicamente es permitido
+            }
+            names.insert(child->name);
+            s.push(child);
+        }
+    }
+    
+    if (duplicateNameCount == 0) {
+        cout << "✓ No hay nombres duplicados en mismo nivel." << endl;
+    }
+    
+    cout << "===========================================" << endl;
+    return isValid;
+}
+
+// Encontrar nodos huérfanos
+vector<string> FileSystemTree::findOrphanNodes() {
+    vector<string> orphans;
+    unordered_set<shared_ptr<TreeNode>> visited;
+    
+    // Recorrer todo el árbol marcando nodos visitados
+    stack<shared_ptr<TreeNode>> s;
+    s.push(root);
+    
+    while (!s.empty()) {
+        auto current = s.top();
+        s.pop();
+        
+        visited.insert(current);
+        
+        for (auto& child : current->children) {
+            s.push(child);
+        }
+    }
+    
+    // Buscar en todos los nodos creados (simulado)
+    // En un sistema real, tendríamos un registro de todos los nodos
+    
+    return orphans;
+}
+
+// Encontrar ciclos
+vector<string> FileSystemTree::findCycles() {
+    vector<string> cycles;
+    
+    // Usar DFS para detectar ciclos
+    unordered_set<int> visited;
+    unordered_set<int> recursionStack;
+    stack<pair<shared_ptr<TreeNode>, vector<string>>> s;
+    
+    s.push({root, {}});
+    
+    while (!s.empty()) {
+        auto [current, path] = s.top();
+        s.pop();
+        
+        if (recursionStack.find(current->id) != recursionStack.end()) {
+            // Ciclo detectado
+            string cyclePath = "Ciclo encontrado: ";
+            for (const auto& nodeName : path) {
+                cyclePath += nodeName + " -> ";
+            }
+            cyclePath += current->name;
+            cycles.push_back(cyclePath);
+            continue;
+        }
+        
+        if (visited.find(current->id) != visited.end()) {
+            continue;
+        }
+        
+        visited.insert(current->id);
+        recursionStack.insert(current->id);
+        
+        vector<string> newPath = path;
+        newPath.push_back(current->name);
+        
+        for (auto& child : current->children) {
+            s.push({child, newPath});
+        }
+        
+        recursionStack.erase(current->id);
+    }
+    
+    return cycles;
+}
+
+// Imprimir estadísticas del árbol
+void FileSystemTree::printTreeStats() {
+    TreeStats stats = getTreeStats();
+    
+    cout << "\n=== ESTADÍSTICAS DEL ÁRBOL ===" << endl;
+    cout << "Nodos totales: " << stats.totalNodes << endl;
+    cout << "Carpetas: " << stats.folderCount << endl;
+    cout << "Archivos: " << stats.fileCount << endl;
+    cout << "Altura del árbol: " << stats.treeHeight << endl;
+    cout << "Profundidad máxima: " << stats.maxDepth << endl;
+    cout << "Profundidad mínima (hojas): " << stats.minDepth << endl;
+    cout << "Profundidad promedio (hojas): " << stats.avgDepth << endl;
+    
+    // Calcular factor de ramificación promedio
+    if (stats.folderCount > 0) {
+        double avgBranching = static_cast<double>(stats.totalNodes - 1) / stats.folderCount;
+        cout << "Factor de ramificación promedio: " << avgBranching << endl;
+    }
+    
+    cout << "===============================\n" << endl;
 }

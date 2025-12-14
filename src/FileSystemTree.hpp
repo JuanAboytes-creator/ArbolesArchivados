@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <chrono>
 
 using namespace std;
 
@@ -33,6 +34,10 @@ private:
     
     // Helper para imprimir árbol
     void printTreeRecursive(shared_ptr<TreeNode> node, int depth);
+    
+    // Helper para estadísticas
+    void collectStatsRecursive(shared_ptr<TreeNode> node, int depth, 
+                              int& folderCount, int& fileCount, int& maxDepth, int& totalNodes);
 
 public:
     FileSystemTree();
@@ -48,13 +53,39 @@ public:
     vector<string> preorderTraversal();
     
     // Búsqueda de nodos
-    shared_ptr<TreeNode> findNodeByPath(const string& path);  // MOVIDO A PÚBLICO
+    shared_ptr<TreeNode> findNodeByPath(const string& path);
+    shared_ptr<TreeNode> findNodeById(int id);
+    
+    // Verificar si nodo está en árbol
+    bool isNodeInTree(shared_ptr<TreeNode> node);
     
     // Propiedades del árbol
     int calculateHeight();
     int calculateSize();
-    shared_ptr<TreeNode> findNodeById(int id);
     bool verifyTreeConsistency();
+    
+    // Estadísticas avanzadas
+    struct TreeStats {
+        int totalNodes;
+        int folderCount;
+        int fileCount;
+        int maxDepth;
+        int minDepth;
+        double avgDepth;
+        int treeHeight;
+    };
+    
+    TreeStats getTreeStats();
+    
+    // Pruebas de rendimiento
+    void generateLargeTree(int levels, int childrenPerLevel);
+    double measureTraversalTime();
+    double measureSearchTime(const string& query);
+    
+    // Casos límite y validación
+    bool validateTreeStructure();
+    vector<string> findOrphanNodes();
+    vector<string> findCycles();
     
     // Getters
     shared_ptr<TreeNode> getRoot() const;
@@ -62,8 +93,7 @@ public:
     
     // Utilidades
     void printTree();
-
-    bool isNodeInTree(std::shared_ptr<TreeNode> node);
+    void printTreeStats();
 };
 
 #endif // FILESYSTEMTREE_HPP

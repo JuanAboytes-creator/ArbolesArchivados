@@ -9,7 +9,11 @@ int main() {
     cout << "    SISTEMA DE ARCHIVOS JERÁRQUICO" << endl;
     cout << "      Proyecto 1 - Estructura de Datos" << endl;
     cout << "           Tema: Árboles" << endl;
+    cout << "           Días 10-11: Pruebas y Rendimiento" << endl;
     cout << "=========================================" << endl;
+    cout << endl;
+    cout << "¡Bienvenido al sistema de archivos jerárquico!" << endl;
+    cout << "Escribe 'help' para ver todos los comandos disponibles." << endl;
     cout << endl;
     
     try {

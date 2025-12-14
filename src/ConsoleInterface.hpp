@@ -13,8 +13,8 @@ class ConsoleInterface {
 private:
     struct TrashItem {
         shared_ptr<TreeNode> node;
-        string originalPath;    // Ruta completa original
-        shared_ptr<TreeNode> parent;  // Padre original
+        string originalPath;
+        shared_ptr<TreeNode> parent;
     };
     
     shared_ptr<FileSystemTree> fileSystem;
@@ -43,6 +43,15 @@ private:
     void listTrash();
     void restoreFromTrash(const string& name);
     void emptyTrash();
+    
+    // Días 10-11: Pruebas de integración y rendimiento
+    void runIntegrationTests();
+    void runPerformanceTests();
+    void runEdgeCaseTests();
+    void showSystemStats();
+    void validateSystem();
+    void generateTestTree(int levels, int children);
+    void benchmarkOperations();
     
     // Helpers
     vector<string> parseArguments(const string& input);

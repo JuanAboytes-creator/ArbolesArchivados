@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "height": 2,
+    "nextId": 5,
+    "nodes": 5,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [],
+        "content": "Contenido de prueba",
+        "id": 1,
+        "name": "test1.txt",
+        "type": "FILE"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "content": "Archivo dentro de carpeta",
+            "id": 3,
+            "name": "archivo1.txt",
+            "type": "FILE"
+          },
+          {
+            "children": [],
+            "id": 4,
+            "name": "subcarpeta",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 2,
+        "name": "carpeta_renombrada",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}
