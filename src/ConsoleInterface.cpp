@@ -10,13 +10,14 @@ ConsoleInterface::ConsoleInterface()
     : fileSystem(make_shared<FileSystemTree>()), 
       currentPath("/root") {
     searchEngine = make_shared<SearchEngine>(fileSystem);
-        //papelera inicia vacia
+    // papelera inicia vacía
 }
 
 void ConsoleInterface::run() {
     cout << "=== SISTEMA DE ARCHIVOS JERÁRQUICO ===" << endl;
     cout << "Comandos disponibles: help, cd, ls, mkdir, touch, mv, rm, rename" << endl;
     cout << "                    search, autocomplete, export, save, load, tree, pwd, exit" << endl;
+    cout << "                    trash, restore, emptytrash" << endl;
     
     string command;
     while (true) {
@@ -91,19 +92,16 @@ void ConsoleInterface::processCommand(const string& command) {
             } else {
                 cout << "Uso: rename <ruta> <nuevo_nombre>" << endl;
             }
-         else if (cmd == "trash") {
+        } else if (cmd == "trash") {
             listTrash();
-        }
-        else if (cmd == "restore") {
+        } else if (cmd == "restore") {
             if (args.size() > 1) {
                 restoreFromTrash(args[1]);
             } else {
                 cout << "Uso: restore <nombre>" << endl;
             }
-        }
-        else if (cmd == "emptytrash") {
+        } else if (cmd == "emptytrash") {
             emptyTrash();
-        }    
         } else if (cmd == "search") {
             if (args.size() > 1) {
                 searchNodes(args[1]);
@@ -154,7 +152,7 @@ void ConsoleInterface::showHelp() {
     cout << "mkdir <nombre>       - Crear nuevo directorio" << endl;
     cout << "touch <nombre> [cont] - Crear nuevo archivo" << endl;
     cout << "mv <origen> <destino> - Mover nodo" << endl;
-    cout << "rm <ruta>            - Eliminar nodo" << endl;
+    cout << "rm <ruta>            - Eliminar nodo (mueve a papelera)" << endl;
     cout << "rename <ruta> <nuevo> - Renombrar nodo" << endl;
     cout << "search <consulta>    - Buscar nodos por nombre" << endl;
     cout << "autocomplete <prefijo> - Sugerencias de autocompletado" << endl;
@@ -163,7 +161,6 @@ void ConsoleInterface::showHelp() {
     cout << "load [archivo]       - Cargar estado desde JSON" << endl;
     cout << "tree                 - Mostrar estructura completa" << endl;
     cout << "pwd                  - Mostrar ruta actual" << endl;
-    //cambio para la papelera
     cout << "trash                 - Mostrar papelera temporal" << endl;
     cout << "restore <nombre>      - Restaurar elemento de papelera" << endl;
     cout << "emptytrash            - Vaciar papelera permanentemente" << endl;
@@ -264,8 +261,15 @@ void ConsoleInterface::removeNode(const string& path) {
             return;
         }
         
-        // guardar copia en papelera - esto es lo del dia 7
-        trashBin.push_back(node);
+        // Guardar información para posible restauración
+        TrashItem item;
+        item.node = node;
+        item.originalPath = absPath;
+        // CORRECCIÓN: Usamos .lock() para obtener shared_ptr del weak_ptr
+        item.parent = node->parent.lock();
+        
+        // guardar en papelera
+        trashBin.push_back(item);
         
         // eliminar del índice de búsqueda
         searchEngine->removeNodeFromIndex(node);
@@ -383,6 +387,8 @@ void ConsoleInterface::loadState(const string& filename) {
             fileSystem = newTree;
             searchEngine = make_shared<SearchEngine>(fileSystem);
             currentPath = "/root";
+            // Limpiar papelera al cargar nuevo estado
+            trashBin.clear();
             cout << "Estado cargado exitosamente desde " << filename << endl;
         } else {
             cout << "Error al cargar el estado" << endl;
@@ -453,6 +459,8 @@ string ConsoleInterface::getAbsolutePath(const string& relativePath) {
     } else {
         return currentPath + "/" + relativePath;
     }
+}
+
 // ============================================
 // PAPELERA (DÍA 7)
 // ============================================
@@ -468,27 +476,85 @@ void ConsoleInterface::listTrash() {
     cout << "==========================" << endl;
     
     for (size_t i = 0; i < trashBin.size(); ++i) {
-        auto node = trashBin[i];
+        auto& item = trashBin[i];
+        auto node = item.node;
         string tipo = node->isFolder() ? "[CARPETA]" : "[ARCHIVO]";
         cout << i+1 << ". " << tipo << " " << node->name 
              << " (ID: " << node->id << ")" << endl;
+        cout << "    Ruta original: " << item.originalPath << endl;
     }
 }
 
 void ConsoleInterface::restoreFromTrash(const string& name) {
     // Buscar nodo en la papelera
     for (auto it = trashBin.begin(); it != trashBin.end(); ++it) {
-        if ((*it)->name == name) {
-            auto node = *it;
+        if (it->node->name == name) {
+            auto& item = *it;
             
-            cout << "Restaurando '" << name << "'..." << endl;
-            cout << "Nota: Función de restauración completa requiere" << endl;
-            cout << "implementación en FileSystemTree::restoreNode()" << endl;
-            
-            trashBin.erase(it);
-            cout << "Nodo removido de la papelera." << endl;
-            cout << "Para restaurar completamente, implementa FileSystemTree::restoreNode()" << endl;
-            return;
+            try {
+                // Determinar dónde restaurar el nodo
+                shared_ptr<TreeNode> parentNode = nullptr;
+                
+                if (item.parent) {
+                    // Intentar restaurar en el padre original
+                    parentNode = item.parent;
+                    
+                    // Verificar que el padre todavía existe en el árbol
+                    // Si no existe, restaurar en /root
+                    if (!fileSystem->isNodeInTree(parentNode)) {
+                        parentNode = fileSystem->findNodeByPath("/root");
+                        if (!parentNode) {
+                            cout << "Error: El padre original ya no existe y no se encontró /root" << endl;
+                            return;
+                        }
+                        cout << "Nota: El padre original ya no existe, restaurando en /root" << endl;
+                    } else {
+                        cout << "Restaurando en el directorio original." << endl;
+                    }
+                } else {
+                    // Si no hay padre original, restaurar en /root
+                    parentNode = fileSystem->findNodeByPath("/root");
+                    if (!parentNode) {
+                        cout << "Error: No se encontró el directorio raíz (/root)" << endl;
+                        return;
+                    }
+                    cout << "Nota: Restaurando en el directorio raíz (/root)" << endl;
+                }
+                
+                // Verificar si ya existe un nodo con el mismo nombre en el directorio destino
+                bool nameExists = false;
+                for (const auto& child : parentNode->children) {
+                    if (child->name == name) {
+                        nameExists = true;
+                        break;
+                    }
+                }
+                
+                if (nameExists) {
+                    cout << "Error: Ya existe un nodo con el nombre '" << name 
+                         << "' en el directorio de destino." << endl;
+                    return;
+                }
+                
+                // Restaurar el nodo al árbol
+                item.node->parent = parentNode;
+                parentNode->children.push_back(item.node);
+                
+                // Reindexar el nodo en el motor de búsqueda
+                searchEngine->indexNode(item.node);
+                
+                // Remover de la papelera
+                trashBin.erase(it);
+                
+                cout << "Nodo '" << name << "' restaurado exitosamente en: " 
+                     << fileSystem->getFullPath(parentNode) << endl;
+                
+                return;
+                
+            } catch (const exception& e) {
+                cout << "Error al restaurar: " << e.what() << endl;
+                return;
+            }
         }
     }
     
@@ -514,5 +580,4 @@ void ConsoleInterface::emptyTrash() {
     } else {
         cout << "Operación cancelada." << endl;
     }
-}
 }

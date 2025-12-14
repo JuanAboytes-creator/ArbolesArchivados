@@ -388,3 +388,7 @@ void FileSystemTree::printTreeRecursive(shared_ptr<TreeNode> node, int depth) {
         printTreeRecursive(child, depth + 1);
     }
 }
+bool FileSystemTree::isNodeInTree(std::shared_ptr<TreeNode> node) {
+    if (!node) return false;
+    return findNodeById(node->id) != nullptr;
+}

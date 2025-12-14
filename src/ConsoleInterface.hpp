@@ -11,10 +11,16 @@ using namespace std;
 
 class ConsoleInterface {
 private:
+    struct TrashItem {
+        shared_ptr<TreeNode> node;
+        string originalPath;    // Ruta completa original
+        shared_ptr<TreeNode> parent;  // Padre original
+    };
+    
     shared_ptr<FileSystemTree> fileSystem;
     shared_ptr<SearchEngine> searchEngine;
     string currentPath;
-    vector<shared_ptr<TreeNode>> trashBin;
+    vector<TrashItem> trashBin;
     
     // Comandos internos
     void processCommand(const string& command);
@@ -34,7 +40,7 @@ private:
     void showTree();
     void showPath();
 
-    void listTrash();                      
+    void listTrash();
     void restoreFromTrash(const string& name);
     void emptyTrash();
     

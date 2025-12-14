@@ -62,6 +62,8 @@ public:
     
     // Utilidades
     void printTree();
+
+    bool isNodeInTree(std::shared_ptr<TreeNode> node);
 };
 
 #endif // FILESYSTEMTREE_HPP
