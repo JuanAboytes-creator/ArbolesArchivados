@@ -10,6 +10,7 @@ ConsoleInterface::ConsoleInterface()
     : fileSystem(make_shared<FileSystemTree>()), 
       currentPath("/root") {
     searchEngine = make_shared<SearchEngine>(fileSystem);
+        //papelera inicia vacia
 }
 
 void ConsoleInterface::run() {
@@ -90,6 +91,19 @@ void ConsoleInterface::processCommand(const string& command) {
             } else {
                 cout << "Uso: rename <ruta> <nuevo_nombre>" << endl;
             }
+         else if (cmd == "trash") {
+            listTrash();
+        }
+        else if (cmd == "restore") {
+            if (args.size() > 1) {
+                restoreFromTrash(args[1]);
+            } else {
+                cout << "Uso: restore <nombre>" << endl;
+            }
+        }
+        else if (cmd == "emptytrash") {
+            emptyTrash();
+        }    
         } else if (cmd == "search") {
             if (args.size() > 1) {
                 searchNodes(args[1]);
@@ -149,6 +163,10 @@ void ConsoleInterface::showHelp() {
     cout << "load [archivo]       - Cargar estado desde JSON" << endl;
     cout << "tree                 - Mostrar estructura completa" << endl;
     cout << "pwd                  - Mostrar ruta actual" << endl;
+    //cambio para la papelera
+    cout << "trash                 - Mostrar papelera temporal" << endl;
+    cout << "restore <nombre>      - Restaurar elemento de papelera" << endl;
+    cout << "emptytrash            - Vaciar papelera permanentemente" << endl;
     cout << "help                 - Mostrar esta ayuda" << endl;
     cout << "exit                 - Salir del sistema" << endl;
     cout << "=========================\n" << endl;
@@ -240,20 +258,29 @@ void ConsoleInterface::removeNode(const string& path) {
     string absPath = getAbsolutePath(path);
     
     try {
-        // Primero remover del índice
         auto node = fileSystem->findNodeByPath(absPath);
-        if (node) {
-            searchEngine->removeNodeFromIndex(node);
+        if (!node) {
+            cout << "Error: Nodo no encontrado: " << path << endl;
+            return;
         }
         
-        // Luego eliminar del árbol
+        // guardar copia en papelera - esto es lo del dia 7
+        trashBin.push_back(node);
+        
+        // eliminar del índice de búsqueda
+        searchEngine->removeNodeFromIndex(node);
+        
+        // eliminar del árbol
         if (fileSystem->deleteNode(absPath)) {
-            cout << "Nodo eliminado exitosamente" << endl;
+            cout << "Nodo '" << node->name << "' movido a la papelera." << endl;
+            cout << "Usa 'trash' para ver la papelera." << endl;
+            cout << "Usa 'restore " << node->name << "' para recuperarlo." << endl;
         }
     } catch (const exception& e) {
         cout << "Error: " << e.what() << endl;
     }
 }
+
 
 void ConsoleInterface::renameNode(const string& path, const string& newName) {
     string absPath = getAbsolutePath(path);
@@ -426,4 +453,66 @@ string ConsoleInterface::getAbsolutePath(const string& relativePath) {
     } else {
         return currentPath + "/" + relativePath;
     }
+// ============================================
+// PAPELERA (DÍA 7)
+// ============================================
+
+void ConsoleInterface::listTrash() {
+    if (trashBin.empty()) {
+        cout << "La papelera está vacía." << endl;
+        return;
+    }
+    
+    cout << "\n=== PAPELERA TEMPORAL ===" << endl;
+    cout << "Elementos: " << trashBin.size() << endl;
+    cout << "==========================" << endl;
+    
+    for (size_t i = 0; i < trashBin.size(); ++i) {
+        auto node = trashBin[i];
+        string tipo = node->isFolder() ? "[CARPETA]" : "[ARCHIVO]";
+        cout << i+1 << ". " << tipo << " " << node->name 
+             << " (ID: " << node->id << ")" << endl;
+    }
+}
+
+void ConsoleInterface::restoreFromTrash(const string& name) {
+    // Buscar nodo en la papelera
+    for (auto it = trashBin.begin(); it != trashBin.end(); ++it) {
+        if ((*it)->name == name) {
+            auto node = *it;
+            
+            cout << "Restaurando '" << name << "'..." << endl;
+            cout << "Nota: Función de restauración completa requiere" << endl;
+            cout << "implementación en FileSystemTree::restoreNode()" << endl;
+            
+            trashBin.erase(it);
+            cout << "Nodo removido de la papelera." << endl;
+            cout << "Para restaurar completamente, implementa FileSystemTree::restoreNode()" << endl;
+            return;
+        }
+    }
+    
+    cout << "Error: No se encontró '" << name << "' en la papelera." << endl;
+}
+
+void ConsoleInterface::emptyTrash() {
+    if (trashBin.empty()) {
+        cout << "La papelera ya está vacía." << endl;
+        return;
+    }
+    
+    cout << "¿Está seguro de vaciar la papelera? (" << trashBin.size() 
+         << " elementos) [s/N]: ";
+    
+    string respuesta;
+    getline(cin, respuesta);
+    
+    if (respuesta == "s" || respuesta == "S") {
+        cout << "Vaciando papelera..." << endl;
+        trashBin.clear();
+        cout << "Papelera vaciada permanentemente." << endl;
+    } else {
+        cout << "Operación cancelada." << endl;
+    }
+}
 }
