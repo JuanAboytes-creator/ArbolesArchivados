@@ -1,0 +1,28 @@
+# ============================================
+# DEMO: OPERACIONES BÁSICAS
+# ============================================
+echo "=== Creando estructura básica ==="
+mkdir ProyectoEDD
+cd ProyectoEDD
+touch README.md "# Proyecto de Estructura de Datos"
+mkdir src
+mkdir docs
+mkdir tests
+
+echo "=== Creando archivos en src ==="
+cd src
+touch main.cpp "// Punto de entrada principal"
+touch TreeNode.cpp "// Implementación de nodos"
+touch FileSystemTree.cpp "// Implementación del árbol"
+
+echo "=== Regresando y listando ==="
+cd ..
+ls
+
+echo "=== Mostrando árbol completo ==="
+tree
+
+echo "=== Mostrando ruta actual ==="
+pwd
+
+echo "=== Demo completada ==="

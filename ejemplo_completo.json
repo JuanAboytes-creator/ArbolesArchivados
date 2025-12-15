@@ -1,0 +1,173 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "type": "filesystem_tree",
+    "nextId": 25,
+    "nodes": 24,
+    "height": 4,
+    "created": "2024-01-15",
+    "description": "Estructura de ejemplo para demostración"
+  },
+  "tree": {
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER",
+    "children": [
+      {
+        "id": 1,
+        "name": "Documentos",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 2,
+            "name": "Universidad",
+            "type": "FOLDER",
+            "children": [
+              {
+                "id": 3,
+                "name": "Estructura de Datos",
+                "type": "FOLDER",
+                "children": [
+                  {
+                    "id": 4,
+                    "name": "Proyecto_Arboles.pdf",
+                    "type": "FILE",
+                    "content": "Documentación del proyecto de árboles"
+                  },
+                  {
+                    "id": 5,
+                    "name": "notas_arboles.txt",
+                    "type": "FILE",
+                    "content": "Árboles binarios, AVL, B, Trie"
+                  }
+                ]
+              },
+              {
+                "id": 6,
+                "name": "Algoritmos",
+                "type": "FOLDER",
+                "children": [
+                  {
+                    "id": 7,
+                    "name": "ordenamiento.cpp",
+                    "type": "FILE",
+                    "content": "// Implementación de quicksort y mergesort"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "name": "Personal",
+            "type": "FOLDER",
+            "children": [
+              {
+                "id": 9,
+                "name": "lista_compras.txt",
+                "type": "FILE",
+                "content": "1. Leche\n2. Pan\n3. Frutas"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "name": "Proyectos",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 11,
+            "name": "SistemaArchivos",
+            "type": "FOLDER",
+            "children": [
+              {
+                "id": 12,
+                "name": "src",
+                "type": "FOLDER",
+                "children": [
+                  {
+                    "id": 13,
+                    "name": "main.cpp",
+                    "type": "FILE",
+                    "content": "// Punto de entrada principal"
+                  },
+                  {
+                    "id": 14,
+                    "name": "TreeNode.cpp",
+                    "type": "FILE",
+                    "content": "// Implementación de nodos del árbol"
+                  }
+                ]
+              },
+              {
+                "id": 15,
+                "name": "README.md",
+                "type": "FILE",
+                "content": "# Sistema de Archivos Jerárquico\n\nProyecto de Estructura de Datos"
+              }
+            ]
+          },
+          {
+            "id": 16,
+            "name": "WebApp",
+            "type": "FOLDER",
+            "children": [
+              {
+                "id": 17,
+                "name": "frontend",
+                "type": "FOLDER",
+                "children": []
+              },
+              {
+                "id": 18,
+                "name": "backend",
+                "type": "FOLDER",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "name": "Descargas",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 20,
+            "name": "imagen_vacaciones.jpg",
+            "type": "FILE",
+            "content": "[IMAGEN BINARIA]"
+          },
+          {
+            "id": 21,
+            "name": "presentacion.pdf",
+            "type": "FILE",
+            "content": "Presentación del proyecto final"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "name": "config",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 23,
+            "name": "settings.json",
+            "type": "FILE",
+            "content": "{\n  \"theme\": \"dark\",\n  \"autoSave\": true\n}"
+          },
+          {
+            "id": 24,
+            "name": "usuarios.txt",
+            "type": "FILE",
+            "content": "admin\nusuario1\nusuario2"
+          }
+        ]
+      }
+    ]
+  }
+}
