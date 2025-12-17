@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "height": 1,
+    "nextId": 4,
+    "nodes": 4,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [],
+        "id": 1,
+        "name": "car1",
+        "type": "FOLDER"
+      },
+      {
+        "children": [],
+        "id": 2,
+        "name": "car2",
+        "type": "FOLDER"
+      },
+      {
+        "children": [],
+        "id": 3,
+        "name": "car3",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

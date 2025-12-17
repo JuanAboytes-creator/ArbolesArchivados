@@ -749,3 +749,37 @@ void FileSystemTree::printTreeStats() {
     
     cout << "===============================\n" << endl;
 }
+void FileSystemTree::rebuildTree(shared_ptr<TreeNode> newRoot, int newNextId) {
+    root = newRoot;
+    nextId = newNextId;
+}
+// Método para limpiar el árbol
+void FileSystemTree::clear() {
+    root = make_shared<TreeNode>(0, "root", NodeType::FOLDER);
+    nextId = 1;
+}
+
+// Método para establecer nueva raíz
+void FileSystemTree::setRoot(shared_ptr<TreeNode> newRoot) {
+    root = newRoot;
+    
+    // Encontrar el máximo ID para establecer nextId correctamente
+    int maxId = 0;
+    stack<shared_ptr<TreeNode>> s;
+    s.push(root);
+    
+    while (!s.empty()) {
+        auto current = s.top();
+        s.pop();
+        
+        if (current->id > maxId) {
+            maxId = current->id;
+        }
+        
+        for (auto& child : current->children) {
+            s.push(child);
+        }
+    }
+    
+    nextId = maxId + 1;
+}

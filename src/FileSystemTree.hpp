@@ -94,6 +94,13 @@ public:
     // Utilidades
     void printTree();
     void printTreeStats();
+    // Método para reconstruir el árbol desde una raíz
+    void rebuildTree(shared_ptr<TreeNode> newRoot, int newNextId);
+
+    // Método para limpiar el árbol
+void clear();
+// Método para establecer nueva raíz
+void setRoot(shared_ptr<TreeNode> newRoot);
 };
 
 #endif // FILESYSTEMTREE_HPP

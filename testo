@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "height": 2,
+    "nextId": 7,
+    "nodes": 5,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "id": 5,
+            "name": "reprobados.com",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 3,
+        "name": "carpet2",
+        "type": "FOLDER"
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "id": 6,
+            "name": "recursadores.com",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 4,
+        "name": "capret3",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

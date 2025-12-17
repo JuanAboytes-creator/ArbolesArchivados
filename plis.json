@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "height": 1,
+    "nextId": 3,
+    "nodes": 3,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [],
+        "id": 1,
+        "name": "porfavor",
+        "type": "FOLDER"
+      },
+      {
+        "children": [],
+        "id": 2,
+        "name": "funciona",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

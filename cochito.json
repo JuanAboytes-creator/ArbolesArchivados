@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "height": 2,
+    "nextId": 6,
+    "nodes": 5,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "children": [
+          {
+            "id": 3,
+            "name": "reprobados.com",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 2,
+        "name": "car2",
+        "type": "FOLDER"
+      },
+      {
+        "children": [
+          {
+            "id": 5,
+            "name": "recursadores",
+            "type": "FOLDER"
+          }
+        ],
+        "id": 4,
+        "name": "car3",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

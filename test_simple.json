@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "type": "filesystem_tree",
+    "nextId": 10,
+    "nodes": 5,
+    "height": 2,
+    "description": "Archivo de prueba simple"
+  },
+  "tree": {
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER",
+    "children": [
+      {
+        "id": 1,
+        "name": "Documentos",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 2,
+            "name": "notas.txt",
+            "type": "FILE",
+            "content": "Estas son mis notas importantes"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Imagenes",
+        "type": "FOLDER",
+        "children": [
+          {
+            "id": 4,
+            "name": "foto.jpg",
+            "type": "FILE",
+            "content": "[DATOS_BINARIOS_DE_IMAGEN]"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "leeme.txt",
+        "type": "FILE",
+        "content": "Archivo en el directorio raíz"
+      }
+    ]
+  }
+}

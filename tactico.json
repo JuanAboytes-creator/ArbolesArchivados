@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "height": 1,
+    "nextId": 2,
+    "nodes": 2,
+    "type": "filesystem_tree",
+    "version": "1.0"
+  },
+  "tree": {
+    "children": [
+      {
+        "id": 1,
+        "name": "tactico",
+        "type": "FOLDER"
+      }
+    ],
+    "id": 0,
+    "name": "root",
+    "type": "FOLDER"
+  }
+}

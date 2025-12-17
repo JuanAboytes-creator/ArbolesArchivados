@@ -657,8 +657,15 @@ void ConsoleInterface::exportPreorder(const string& filename) {
 
 void ConsoleInterface::saveState(const string& filename) {
     try {
-        if (JsonHandler::saveTree(fileSystem, filename)) {
-            cout << "Estado guardado exitosamente en " << filename << endl;
+        string finalFilename = filename;
+        
+        // Asegurar que tenga extensión .json
+        if (finalFilename.find(".json") == string::npos) {
+            finalFilename += ".json";
+        }
+        
+        if (JsonHandler::saveTree(fileSystem, finalFilename)) {
+            cout << "Estado guardado exitosamente en " << finalFilename << endl;
         } else {
             cout << "Error al guardar el estado" << endl;
         }
@@ -669,18 +676,40 @@ void ConsoleInterface::saveState(const string& filename) {
 
 void ConsoleInterface::loadState(const string& filename) {
     try {
-        // Crear nuevo árbol
-        auto newTree = make_shared<FileSystemTree>();
+        string finalFilename = filename;
         
-        if (JsonHandler::loadTree(newTree, filename)) {
-            fileSystem = newTree;
+        // Intentar con .json si no tiene extensión
+        if (finalFilename.find(".") == string::npos) {
+            finalFilename += ".json";
+        }
+        
+        // Primero intentar cargar directamente
+        if (JsonHandler::loadTree(fileSystem, finalFilename)) {
+            // Recrear motor de búsqueda
             searchEngine = make_shared<SearchEngine>(fileSystem);
             currentPath = "/root";
-            // Limpiar papelera al cargar nuevo estado
             trashBin.clear();
-            cout << "Estado cargado exitosamente desde " << filename << endl;
+            cout << "Estado cargado exitosamente desde " << finalFilename << endl;
+            
+            // Mostrar árbol cargado
+            cout << "\nEstructura cargada:\n";
+            fileSystem->printTree();
         } else {
-            cout << "Error al cargar el estado" << endl;
+            // Si falla, intentar sin extensión
+            if (filename.find(".json") != string::npos) {
+                // Ya intentamos con .json, probar sin extensión
+                if (JsonHandler::loadTree(fileSystem, filename)) {
+                    searchEngine = make_shared<SearchEngine>(fileSystem);
+                    currentPath = "/root";
+                    trashBin.clear();
+                    cout << "Estado cargado exitosamente desde " << filename << endl;
+                    fileSystem->printTree();
+                } else {
+                    cout << "Error: No se pudo cargar el archivo " << filename << endl;
+                }
+            } else {
+                cout << "Error: No se pudo cargar el archivo " << finalFilename << endl;
+            }
         }
     } catch (const exception& e) {
         cout << "Error: " << e.what() << endl;
